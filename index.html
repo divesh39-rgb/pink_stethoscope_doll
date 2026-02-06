@@ -58,10 +58,11 @@
       backdrop-filter: blur(10px);
     }
     h1{margin:0 0 6px;font-size:40px;line-height:1.05;letter-spacing:-.02em}
+    h2{margin:0 0 8px;font-size:22px}
     p{margin:0;color:var(--muted);line-height:1.6}
     .big{font-size:16px}
     .divider{height:1px;background:rgba(0,0,0,.07);margin:16px 0}
-    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
     button{
       appearance:none;border:none;cursor:pointer;
       padding:12px 14px;border-radius:14px;
@@ -213,6 +214,14 @@
       padding: 8px 12px;
     }
 
+    /* “Yes” button bigger */
+    .bigYes{
+      padding: 14px 18px;
+      font-size: 16px;
+      border-radius: 16px;
+      transform-origin: center;
+    }
+
     /* floating hearts */
     .heart{
       position:fixed;
@@ -248,7 +257,6 @@ const QUIZ = {
   herName: "Neha",
   pointsPerQuestion: 10,
 
-  // New creative first-page text
   startSubtitle: "Before the quiz… open your letter 💌",
   letterTitle: "A tiny note",
   letterBody:
@@ -259,9 +267,7 @@ const QUIZ = {
     { label: "Bold 😈", line: "Bold mode unlocked. I’m not even pretending to be calm." }
   ],
 
-  // Final screen requirements
   finalScoreText: "100 out of 70",
-  finalLine: "You passed the valentine quiz and Shikamaru has won a valentine date with you 💞",
 
   questions: [
     {
@@ -345,7 +351,10 @@ const state = {
   score: 0,
   letterOpen: false,
   vibe: null,
-  startUnlocked: false
+  startUnlocked: false,
+
+  // end-screen interaction state
+  endStep: 0 // 0 initial, 1 after maybe, 2 after you can do better
 };
 
 const $ = (id) => document.getElementById(id);
@@ -424,7 +433,6 @@ function renderStart(app){
   const tiles = document.createElement("div");
   tiles.className = "tiles";
 
-  // Tile 1: Pick a vibe
   const t1 = document.createElement("div");
   t1.className = "tile";
   t1.innerHTML = `<b>Pick a vibe 🎭</b><small>${state.vibe ? "Selected: " + escapeHtml(state.vibe.label) : "Soft / Funny / Bold"}</small>`;
@@ -435,7 +443,6 @@ function renderStart(app){
     render();
   };
 
-  // Tile 2: Warm-up unlock
   const t2 = document.createElement("div");
   t2.className = "tile";
   t2.innerHTML = `<b>Warm-up 🔓</b><small>${state.startUnlocked ? "Unlocked! Start button is ready ✨" : "Tap here to unlock the quiz"}</small>`;
@@ -445,7 +452,6 @@ function renderStart(app){
     render();
   };
 
-  // Tile 3: Hearts
   const t3 = document.createElement("div");
   t3.className = "tile";
   t3.innerHTML = `<b>Tap for hearts 💗</b><small>Because you deserve extra</small>`;
@@ -524,7 +530,6 @@ function renderStart(app){
   grid.appendChild(right);
   app.appendChild(grid);
 
-  // Wire seal after DOM insert
   setTimeout(() => {
     const seal = document.getElementById("sealBtn");
     if(seal){
@@ -617,6 +622,7 @@ function answer(choiceIndex){
 function finish(){
   heartBurst(40);
   state.screen = "end";
+  state.endStep = 0;
   render();
 }
 
@@ -639,36 +645,101 @@ function renderEnd(app){
     <div class="scoreText">${escapeHtml(QUIZ.finalScoreText)}</div>
   `;
 
-  const msg = document.createElement("p");
-  msg.className = "big";
-  msg.style.color = "var(--text)";
-  msg.style.fontWeight = "800";
-  msg.textContent = QUIZ.finalLine;
+  const questionLine = document.createElement("p");
+  questionLine.className = "big";
+  questionLine.style.color = "var(--text)";
+  questionLine.style.fontWeight = "900";
+  questionLine.textContent = "Will you be Shikamaru's Valentine?";
+
+  const hintLine = document.createElement("p");
+  hintLine.className = "big";
+  hintLine.id = "endHint";
+  hintLine.style.maxWidth = "640px";
+  hintLine.textContent = ""; // filled by endStep state
 
   const row = document.createElement("div");
   row.className = "btnrow";
+  row.style.justifyContent = "center";
 
-  const replayBtn = document.createElement("button");
-  replayBtn.className = "primary";
-  replayBtn.textContent = "Play again 🔁";
-  replayBtn.onclick = () => {
-    state.screen = "start";
-    render();
-  };
+  const leftBtn = document.createElement("button");
+  leftBtn.id = "leftBtn";
+  leftBtn.className = "primary bigYes";
+  leftBtn.textContent = "Yes";
 
-  const heartsBtn = document.createElement("button");
-  heartsBtn.className = "secondary";
-  heartsBtn.textContent = "More hearts 💗";
-  heartsBtn.onclick = () => heartBurst(26);
+  const rightBtn = document.createElement("button");
+  rightBtn.id = "rightBtn";
+  rightBtn.className = "secondary";
+  rightBtn.textContent = "May be";
 
-  row.appendChild(replayBtn);
-  row.appendChild(heartsBtn);
+  // Apply state-driven text + behavior
+  applyEndState(leftBtn, rightBtn, hintLine);
+
+  row.appendChild(leftBtn);
+  row.appendChild(rightBtn);
 
   wrap.appendChild(badge);
-  wrap.appendChild(msg);
+  wrap.appendChild(questionLine);
+  wrap.appendChild(hintLine);
   wrap.appendChild(row);
 
   app.appendChild(wrap);
+}
+
+function applyEndState(leftBtn, rightBtn, hintLine){
+  // Reset defaults
+  leftBtn.className = "primary bigYes";
+  leftBtn.textContent = state.endStep >= 1 ? "Hard Yes" : "Yes";
+
+  if(state.endStep === 0){
+    hintLine.textContent = "";
+
+    leftBtn.onclick = () => {
+      heartBurst(45);
+      hintLine.textContent = "Yayyy 💞 Date accepted. Shikamaru is smiling already 😌";
+      // disable both
+      leftBtn.disabled = true; rightBtn.disabled = true;
+      leftBtn.style.opacity = .85; rightBtn.style.opacity = .6;
+    };
+
+    rightBtn.textContent = "May be";
+    rightBtn.onclick = () => {
+      state.endStep = 1;
+      heartBurst(14);
+      render();
+    };
+    return;
+  }
+
+  if(state.endStep === 1){
+    hintLine.textContent = "Think again… I think you want to date Shikamaru 😌. Press “Hard Yes” to the left to accept, else click “You can do beter”.";
+    rightBtn.textContent = "You can do beter";
+    rightBtn.onclick = () => {
+      state.endStep = 2;
+      heartBurst(16);
+      render();
+    };
+
+    leftBtn.onclick = () => {
+      heartBurst(45);
+      hintLine.textContent = "Correct choice 😌💞 Date accepted. Shikamaru wins!";
+      leftBtn.disabled = true; rightBtn.disabled = true;
+      leftBtn.style.opacity = .85; rightBtn.style.opacity = .6;
+    };
+    return;
+  }
+
+  // endStep === 2
+  hintLine.textContent = "You have chosen the right button 😌💗 and you have the best man waiting for you. Press “Hard Yes” to accept.";
+  rightBtn.textContent = "You have chosen the right button";
+  rightBtn.disabled = true;
+  rightBtn.style.opacity = .7;
+
+  leftBtn.onclick = () => {
+    heartBurst(55);
+    hintLine.textContent = "DONE 💞 Shikamaru has officially secured his Valentine. See you on our date 😌";
+    leftBtn.disabled = true;
+    leftBtn.style.opacity = .85;
+  };
 }
 
 // Init
