@@ -103,6 +103,74 @@
       min-height: 24px;
     }
 
+    /* Creative start screen layout */
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top:10px;
+      align-items:stretch;
+    }
+    @media (max-width:860px){ .heroGrid{grid-template-columns:1fr;} h1{font-size:34px} }
+
+    .tiles{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width:860px){ .tiles{grid-template-columns:1fr;} }
+
+    .tile{
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:12px 12px;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .2s ease;
+      box-shadow:0 10px 22px rgba(0,0,0,.07);
+      min-height:92px;
+    }
+    .tile:hover{transform: translateY(-1px)}
+    .tile b{display:block;margin-bottom:6px}
+    .tile small{color:var(--muted);line-height:1.45}
+
+    /* Envelope */
+    .envelope{
+      border-radius:18px;
+      border:1px dashed rgba(225,29,72,.35);
+      background:
+        radial-gradient(420px 220px at 30% 35%, rgba(251,113,133,.22), transparent 55%),
+        radial-gradient(520px 260px at 70% 60%, rgba(225,29,72,.12), transparent 55%),
+        rgba(255,255,255,.78);
+      padding:14px;
+      display:grid;
+      gap:10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .sealRow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .seal{
+      width:44px;height:44px;border-radius:999px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:white;font-size:20px;font-weight:900;
+      box-shadow:0 14px 26px rgba(225,29,72,.25);
+      transform: rotate(-8deg);
+    }
+    .letter{
+      background: rgba(255,255,255,.9);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:16px;
+      padding:12px;
+      display:none;
+    }
+    .letter.show{display:block; animation: pop .22s ease-out;}
+    @keyframes pop{
+      from{transform: translateY(6px); opacity:.0}
+      to{transform: translateY(0); opacity:1}
+    }
+
     /* Final heart badge */
     .resultWrap{
       display:grid;
@@ -159,8 +227,6 @@
       from{ transform: translateY(0) scale(.9); opacity: .95;}
       to{ transform: translateY(-110vh) scale(1.25); opacity: 0;}
     }
-
-    @media (max-width:860px){ h1{font-size:34px} .heartBadge{width:190px;height:190px} }
   </style>
 </head>
 <body>
@@ -180,11 +246,20 @@
 const QUIZ = {
   fromName: "Your Name",
   herName: "Neha",
-  // Keep pointsPerQuestion = 10 so:
-  // 7 questions -> score 70/70
   pointsPerQuestion: 10,
 
-  // Your final message requirements:
+  // New creative first-page text
+  startSubtitle: "Before the quiz… open your letter 💌",
+  letterTitle: "A tiny note",
+  letterBody:
+    "You’re my favorite notification. Even from far away. Now tap through this little game and claim your prize 😌💞",
+  vibeOptions: [
+    { label: "Soft 🥺", line: "Soft mode unlocked. Extra pyaar." },
+    { label: "Funny 😌", line: "Funny mode unlocked. Expect drama + memes." },
+    { label: "Bold 😈", line: "Bold mode unlocked. I’m not even pretending to be calm." }
+  ],
+
+  // Final screen requirements
   finalScoreText: "100 out of 70",
   finalLine: "You passed the valentine quiz and Shikamaru has won a valentine date with you 💞",
 
@@ -264,7 +339,14 @@ const QUIZ = {
 };
 /** ========================= */
 
-const state = { screen: "start", index: 0, score: 0 };
+const state = {
+  screen: "start",  // start | quiz | end
+  index: 0,
+  score: 0,
+  letterOpen: false,
+  vibe: null,
+  startUnlocked: false
+};
 
 const $ = (id) => document.getElementById(id);
 
@@ -288,7 +370,6 @@ function heartBurst(n=18){
     setTimeout(() => spawnHeart(Math.random()*window.innerWidth, window.innerHeight - 10), i*35);
   }
 }
-
 function escapeHtml(s){
   return String(s)
     .replaceAll("&","&amp;")
@@ -313,43 +394,147 @@ function renderStart(app){
 
   const p = document.createElement("p");
   p.className = "big";
-  p.textContent = "Pick any option — every answer is correct 😌💗";
+  p.textContent = QUIZ.startSubtitle;
   app.appendChild(p);
+
+  const grid = document.createElement("div");
+  grid.className = "heroGrid";
+
+  // Left: envelope + tiles
+  const left = document.createElement("div");
+
+  const env = document.createElement("div");
+  env.className = "envelope";
+  env.innerHTML = `
+    <div class="sealRow">
+      <div style="display:grid;gap:2px">
+        <b style="font-size:14px">For ${escapeHtml(QUIZ.herName)}</b>
+        <small style="color:var(--muted)">Tap the seal to open</small>
+      </div>
+      <div class="seal" id="sealBtn">♥</div>
+    </div>
+    <div class="letter ${state.letterOpen ? "show" : ""}" id="letterBox">
+      <b>${escapeHtml(QUIZ.letterTitle)}</b>
+      <div style="height:8px"></div>
+      <small style="color:var(--muted);line-height:1.55">${escapeHtml(QUIZ.letterBody)}</small>
+    </div>
+  `;
+  left.appendChild(env);
+
+  const tiles = document.createElement("div");
+  tiles.className = "tiles";
+
+  // Tile 1: Pick a vibe
+  const t1 = document.createElement("div");
+  t1.className = "tile";
+  t1.innerHTML = `<b>Pick a vibe 🎭</b><small>${state.vibe ? "Selected: " + escapeHtml(state.vibe.label) : "Soft / Funny / Bold"}</small>`;
+  t1.onclick = () => {
+    const nextIdx = state.vibe ? (QUIZ.vibeOptions.indexOf(state.vibe) + 1) % QUIZ.vibeOptions.length : 0;
+    state.vibe = QUIZ.vibeOptions[nextIdx];
+    heartBurst(10);
+    render();
+  };
+
+  // Tile 2: Warm-up unlock
+  const t2 = document.createElement("div");
+  t2.className = "tile";
+  t2.innerHTML = `<b>Warm-up 🔓</b><small>${state.startUnlocked ? "Unlocked! Start button is ready ✨" : "Tap here to unlock the quiz"}</small>`;
+  t2.onclick = () => {
+    state.startUnlocked = true;
+    heartBurst(16);
+    render();
+  };
+
+  // Tile 3: Hearts
+  const t3 = document.createElement("div");
+  t3.className = "tile";
+  t3.innerHTML = `<b>Tap for hearts 💗</b><small>Because you deserve extra</small>`;
+  t3.onclick = () => heartBurst(24);
+
+  tiles.appendChild(t1);
+  tiles.appendChild(t2);
+  tiles.appendChild(t3);
+  left.appendChild(tiles);
+
+  // Right: summary card
+  const right = document.createElement("div");
+  right.className = "card";
+  right.style.boxShadow = "none";
+  right.style.border = "1px solid rgba(0,0,0,.06)";
+
+  const rTitle = document.createElement("h2");
+  rTitle.textContent = "What you’re about to play";
+  right.appendChild(rTitle);
+
+  const rP = document.createElement("p");
+  rP.className = "big";
+  rP.textContent = "A tiny Valentine quiz where every option is correct 😌 (I just want your choices.)";
+  right.appendChild(rP);
 
   const divider = document.createElement("div");
   divider.className = "divider";
-  app.appendChild(divider);
+  right.appendChild(divider);
 
   const meta = document.createElement("div");
   meta.className = "topbar";
   meta.innerHTML = `
     <div class="pill">Questions: ${QUIZ.questions.length}</div>
-    <div class="pill">Score: full points always</div>
+    <div class="pill">Full points always</div>
   `;
-  app.appendChild(meta);
+  right.appendChild(meta);
 
-  const row = document.createElement("div");
-  row.className = "btnrow";
+  const vibeLine = document.createElement("p");
+  vibeLine.style.marginTop = "12px";
+  vibeLine.textContent = state.vibe ? state.vibe.line : "Pick a vibe on the left (optional).";
+  right.appendChild(vibeLine);
+
+  const btns = document.createElement("div");
+  btns.className = "btnrow";
 
   const startBtn = document.createElement("button");
-  startBtn.className = "primary";
-  startBtn.textContent = "Start Quiz ✨";
+  startBtn.className = state.startUnlocked ? "primary" : "secondary";
+  startBtn.textContent = state.startUnlocked ? "Start Quiz ✨" : "Unlock first 🔓";
+  startBtn.style.opacity = state.startUnlocked ? "1" : ".75";
   startBtn.onclick = () => {
+    if(!state.startUnlocked){
+      heartBurst(8);
+      return;
+    }
     state.screen = "quiz";
     state.index = 0;
     state.score = 0;
-    heartBurst(16);
+    heartBurst(18);
     render();
   };
 
-  const heartsBtn = document.createElement("button");
-  heartsBtn.className = "secondary";
-  heartsBtn.textContent = "Tap for hearts 💗";
-  heartsBtn.onclick = () => heartBurst(22);
+  const openLetterBtn = document.createElement("button");
+  openLetterBtn.className = "ghost";
+  openLetterBtn.textContent = state.letterOpen ? "Close letter" : "Open letter 💌";
+  openLetterBtn.onclick = () => {
+    state.letterOpen = !state.letterOpen;
+    heartBurst(10);
+    render();
+  };
 
-  row.appendChild(startBtn);
-  row.appendChild(heartsBtn);
-  app.appendChild(row);
+  btns.appendChild(startBtn);
+  btns.appendChild(openLetterBtn);
+  right.appendChild(btns);
+
+  grid.appendChild(left);
+  grid.appendChild(right);
+  app.appendChild(grid);
+
+  // Wire seal after DOM insert
+  setTimeout(() => {
+    const seal = document.getElementById("sealBtn");
+    if(seal){
+      seal.onclick = () => {
+        state.letterOpen = !state.letterOpen;
+        heartBurst(14);
+        render();
+      };
+    }
+  }, 0);
 }
 
 function renderQuiz(app){
@@ -403,7 +588,6 @@ function renderQuiz(app){
   backBtn.onclick = () => {
     if(state.index === 0) return;
     state.index -= 1;
-    // remove points for going back (keep simple + consistent)
     state.score = Math.max(0, state.score - QUIZ.pointsPerQuestion);
     render();
   };
@@ -413,10 +597,9 @@ function renderQuiz(app){
 }
 
 function answer(choiceIndex){
-  // Always add full points
   state.score += QUIZ.pointsPerQuestion;
 
-  const reaction = $("reaction");
+  const reaction = document.getElementById("reaction");
   if(reaction) reaction.textContent = "Correct 😌💞";
   spawnHeart();
 
@@ -489,7 +672,7 @@ function renderEnd(app){
 }
 
 // Init
-$("fromName").textContent = QUIZ.fromName;
+document.getElementById("fromName").textContent = QUIZ.fromName;
 setToday();
 render();
 
