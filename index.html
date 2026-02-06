@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Happy Valentine’s Day ❤️</title>
-  <meta name="description" content="A little Valentine’s website made with love." />
+  <title>Valentine Quiz 💞</title>
   <style>
     :root{
       --bg1:#fff1f4;
       --bg2:#ffe6ef;
       --card:#ffffffcc;
-      --text:#2b1b1f;
+      --text:#25161b;
       --muted:#6b4b55;
       --accent:#e11d48;
       --accent2:#fb7185;
-      --shadow: 0 12px 30px rgba(0,0,0,.12);
+      --shadow: 0 14px 34px rgba(0,0,0,.12);
       --radius: 22px;
     }
     *{box-sizing:border-box}
@@ -28,11 +27,11 @@
                   linear-gradient(180deg, #fff, #ffeef6);
       overflow-x:hidden;
     }
-    a{color:inherit}
-    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 70px}
+    .wrap{max-width:980px;margin:0 auto;padding:22px 16px 70px}
     header{
-      display:flex;align-items:center;justify-content:space-between;gap:16px;
-      padding:18px 14px 8px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:10px 4px 12px;
+      flex-wrap:wrap;
     }
     .badge{
       display:inline-flex;align-items:center;gap:10px;
@@ -41,7 +40,7 @@
       border-radius:999px;
       padding:10px 14px;
       box-shadow:0 6px 18px rgba(0,0,0,.07);
-      font-weight:650;
+      font-weight:800;
     }
     .badge span{color:var(--accent)}
     .chip{
@@ -50,14 +49,6 @@
       border:1px solid rgba(0,0,0,.06);
       padding:8px 12px;border-radius:999px;
     }
-    .hero{
-      margin-top:18px;
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:18px;
-      align-items:stretch;
-    }
-    @media (max-width:860px){ .hero{grid-template-columns:1fr;}}
     .card{
       background:var(--card);
       border:1px solid rgba(0,0,0,.06);
@@ -66,78 +57,95 @@
       padding:22px;
       backdrop-filter: blur(10px);
     }
-    h1{
-      margin:0 0 8px;
-      font-size:42px; line-height:1.05;
-      letter-spacing:-.02em;
-    }
-    .subtitle{color:var(--muted);font-size:16px;line-height:1.55;margin:0 0 18px}
-    .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    h1{margin:0 0 6px;font-size:40px;line-height:1.05;letter-spacing:-.02em}
+    p{margin:0;color:var(--muted);line-height:1.6}
+    .big{font-size:16px}
+    .divider{height:1px;background:rgba(0,0,0,.07);margin:16px 0}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
     button{
       appearance:none;border:none;cursor:pointer;
       padding:12px 14px;border-radius:14px;
-      font-weight:650;
-      transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+      font-weight:800;
+      transition: transform .08s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+      user-select:none;
     }
+    button:active{transform:translateY(1px)}
     .primary{
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color:white;
       box-shadow: 0 10px 22px rgba(225,29,72,.25);
     }
     .secondary{
-      background:rgba(255,255,255,.75);
+      background:rgba(255,255,255,.78);
       border:1px solid rgba(0,0,0,.08);
       color:var(--text);
     }
-    button:active{transform:translateY(1px)}
-    .right{
-      display:flex;flex-direction:column;gap:14px;
-    }
-    .photo{
-      border-radius:18px;
-      height:240px;
+    .ghost{
+      background:transparent;
       border:1px dashed rgba(225,29,72,.35);
-      display:grid;place-items:center;
-      color:var(--muted);
-      background:
-        radial-gradient(500px 250px at 30% 40%, rgba(251,113,133,.22), transparent 55%),
-        radial-gradient(500px 250px at 70% 60%, rgba(225,29,72,.12), transparent 55%),
-        rgba(255,255,255,.7);
-      overflow:hidden;
-      position:relative;
+      color:var(--text);
     }
-    .photo img{width:100%;height:100%;object-fit:cover;display:block}
-    .photo small{padding:0 14px;text-align:center}
-    .grid{
-      margin-top:16px;
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      font-size:13px;color:var(--muted);
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(0,0,0,.06);
+      padding:8px 12px;border-radius:999px;
+      font-weight:750;
+    }
+    .reaction{
+      margin-top:10px;
+      color: var(--accent);
+      font-weight: 800;
+      min-height: 24px;
+    }
+
+    /* Final heart badge */
+    .resultWrap{
       display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-    }
-    @media (max-width:860px){ .grid{grid-template-columns:1fr;}}
-    .mini h3{margin:0 0 6px;font-size:15px}
-    .mini p{margin:0;color:var(--muted);line-height:1.55;font-size:14px}
-    .divider{height:1px;background:rgba(0,0,0,.07);margin:16px 0}
-    .timeline{display:grid;gap:10px;margin-top:8px}
-    .item{
-      display:flex;gap:12px;align-items:flex-start;
-      padding:12px;border-radius:16px;background:rgba(255,255,255,.65);
-      border:1px solid rgba(0,0,0,.05);
-    }
-    .dot{
-      width:12px;height:12px;border-radius:999px;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      margin-top:4px; flex: 0 0 auto;
-      box-shadow:0 6px 14px rgba(225,29,72,.22);
-    }
-    .item b{display:block;margin-bottom:2px}
-    footer{
-      margin-top:22px;
+      place-items:center;
       text-align:center;
-      color:var(--muted);
-      font-size:13px;
+      gap:14px;
+      padding: 18px 6px 6px;
     }
-    /* Floating hearts */
+    .heartBadge{
+      width: 210px;
+      height: 210px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      position:relative;
+      background:
+        radial-gradient(90px 90px at 30% 30%, rgba(251,113,133,.35), transparent 60%),
+        radial-gradient(110px 110px at 70% 70%, rgba(225,29,72,.22), transparent 62%),
+        rgba(255,255,255,.85);
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .heartIcon{
+      font-size: 84px;
+      line-height: 1;
+      filter: drop-shadow(0 10px 18px rgba(225,29,72,.18));
+      transform: translateY(-8px);
+    }
+    .scoreText{
+      position:absolute;
+      bottom: 36px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -.02em;
+      font-size: 22px;
+      background: rgba(255,255,255,.8);
+      border: 1px solid rgba(0,0,0,.06);
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+
+    /* floating hearts */
     .heart{
       position:fixed;
       font-size:18px;
@@ -145,238 +153,351 @@
       animation: floatUp 3.8s linear forwards;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.12));
       opacity:.9;
+      z-index: 9998;
     }
     @keyframes floatUp{
       from{ transform: translateY(0) scale(.9); opacity: .95;}
       to{ transform: translateY(-110vh) scale(1.25); opacity: 0;}
     }
-    dialog{
-      border:none;border-radius:18px;
-      box-shadow:var(--shadow);
-      max-width:560px;width:calc(100% - 28px);
-      padding:0;
-      overflow:hidden;
-    }
-    dialog::backdrop{background:rgba(0,0,0,.22)}
-    .modal{
-      padding:18px 18px 14px;
-      background:white;
-    }
-    .modal h2{margin:2px 0 8px}
-    .modal p{margin:0;color:var(--muted);line-height:1.6}
-    .modal .btnrow{margin-top:14px;justify-content:flex-end}
-    .muted{color:var(--muted)}
-    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-         font-size:12px;background:#f6f6f6;border:1px solid #e9e9e9;padding:2px 6px;border-radius:8px}
+
+    @media (max-width:860px){ h1{font-size:34px} .heartBadge{width:190px;height:190px} }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="badge">Made with <span>♥</span> by <span id="fromName">Your Name</span></div>
-      <div class="chip">Valentine’s • <span class="kbd" id="today"></span></div>
+      <div class="badge">Made with <span>♥</span> by <span id="fromName"></span></div>
+      <div class="chip">Valentine’s • <span id="today"></span></div>
     </header>
 
-    <section class="hero">
-      <div class="card">
-        <h1>Happy Valentine’s Day, <span id="herName">My Love</span> ❤️</h1>
-        <p class="subtitle" id="intro">
-          I made you a tiny website because you deserve something that’s yours—sweet, simple, and full of us.
-        </p>
-
-        <div class="divider"></div>
-
-        <h2 style="margin:0 0 8px;">Three things I love about you</h2>
-        <div class="grid">
-          <div class="card mini" style="box-shadow:none">
-            <h3>1) <span id="love1Title">Your smile</span></h3>
-            <p id="love1Text">It turns ordinary moments into my favorite memories.</p>
-          </div>
-          <div class="card mini" style="box-shadow:none">
-            <h3>2) <span id="love2Title">Your heart</span></h3>
-            <p id="love2Text">The way you care makes everything feel safe.</p>
-          </div>
-          <div class="card mini" style="box-shadow:none">
-            <h3>3) <span id="love3Title">Your vibe</span></h3>
-            <p id="love3Text">Life is lighter, funnier, and better with you.</p>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <h2 style="margin:0 0 8px;">Our little timeline</h2>
-        <div class="timeline" id="timeline">
-          <div class="item"><div class="dot"></div><div><b>First time I knew</b><span class="muted" id="t1">When you laughed at my dumb joke.</span></div></div>
-          <div class="item"><div class="dot"></div><div><b>Favorite memory</b><span class="muted" id="t2">That day we couldn’t stop smiling.</span></div></div>
-          <div class="item"><div class="dot"></div><div><b>What I want next</b><span class="muted" id="t3">More dates, more photos, more “us”.</span></div></div>
-        </div>
-
-        <div class="btnrow">
-          <button class="primary" id="btnHearts">Tap for hearts 💗</button>
-          <button class="secondary" id="btnNote">Open my note ✉️</button>
-          <button class="secondary" id="btnQuestion">A question… 👀</button>
-        </div>
-
-        <p class="subtitle" style="margin-top:14px">
-          Tip: Replace the placeholders with your names + memories near the bottom of this file.
-        </p>
-      </div>
-
-      <div class="right">
-        <div class="card photo" id="photoBox">
-          <!-- Replace with your image: <img src="photo.jpg" alt="Us" /> -->
-          <small>
-            Add a photo of you two here 💞<br/>
-            Put an image next to this file and use: <span class="kbd">&lt;img src="photo.jpg"&gt;</span>
-          </small>
-        </div>
-
-        <div class="card">
-          <h2 style="margin:0 0 8px;">Today’s plan</h2>
-          <p class="subtitle" id="plan">
-            Dinner, dessert, and a long walk—plus one surprise.
-          </p>
-          <div class="divider"></div>
-          <p class="subtitle" style="margin:0">
-            P.S. If you’re reading this… you’re my favorite person. Always.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      Built just for you • <span id="footerLine">Forever & always.</span>
-    </footer>
+    <main class="card" id="app"></main>
   </div>
 
-  <dialog id="note">
-    <div class="modal">
-      <h2>My note to you 💌</h2>
-      <p id="noteText">
-        You make my days softer and my laughs louder. I’m grateful for you—today and every day after.
-      </p>
-      <div class="btnrow">
-        <button class="secondary" id="closeNote">Close</button>
-      </div>
-    </div>
-  </dialog>
+<script>
+/** =========================
+ *  EDIT ONLY THIS BLOCK
+ *  ========================= */
+const QUIZ = {
+  fromName: "Your Name",
+  herName: "Neha",
+  // Keep pointsPerQuestion = 10 so:
+  // 7 questions -> score 70/70
+  pointsPerQuestion: 10,
 
-  <dialog id="question">
-    <div class="modal">
-      <h2>Will you be my Valentine? 💘</h2>
-      <p class="muted">You can only pick one option. (Okay, you can pick both.)</p>
-      <div class="btnrow" style="justify-content:space-between; margin-top:16px">
-        <button class="primary" id="yesBtn">YESSS 💖</button>
-        <button class="secondary" id="alsoYesBtn">Also yes 😌</button>
-      </div>
-      <div class="btnrow">
-        <button class="secondary" id="closeQuestion">Close</button>
-      </div>
-    </div>
-  </dialog>
+  // Your final message requirements:
+  finalScoreText: "100 out of 70",
+  finalLine: "You passed the valentine quiz and Shikamaru has won a valentine date with you 💞",
 
-  <script>
-    // ====== PERSONALIZE THESE ======
-    const content = {
-      fromName: "Your Name",
-      herName: "Her Name",
-      intro: "I made you a tiny website because you deserve something that’s yours—sweet, simple, and full of us.",
-      plan: "Dinner, dessert, and a long walk—plus one surprise.",
-      footerLine: "Forever & always.",
-      loves: [
-        { title: "Your smile", text: "It turns ordinary moments into my favorite memories." },
-        { title: "Your heart", text: "The way you care makes everything feel safe." },
-        { title: "Your vibe",  text: "Life is lighter, funnier, and better with you." }
-      ],
-      timeline: [
-        { title: "First time I knew", text: "When you laughed at my dumb joke." },
-        { title: "Favorite memory",  text: "That day we couldn’t stop smiling." },
-        { title: "What I want next",  text: "More dates, more photos, more “us”." }
-      ],
-      noteText: "You make my days softer and my laughs louder. I’m grateful for you—today and every day after."
-    };
-    // ================================
-
-    // Fill content
-    const $ = (id) => document.getElementById(id);
-    $("fromName").textContent = content.fromName;
-    $("herName").textContent = content.herName;
-    $("intro").textContent = content.intro;
-    $("plan").textContent = content.plan;
-    $("footerLine").textContent = content.footerLine;
-
-    $("love1Title").textContent = content.loves[0].title;
-    $("love1Text").textContent  = content.loves[0].text;
-    $("love2Title").textContent = content.loves[1].title;
-    $("love2Text").textContent  = content.loves[1].text;
-    $("love3Title").textContent = content.loves[2].title;
-    $("love3Text").textContent  = content.loves[2].text;
-
-    // Timeline
-    const timelineEl = $("timeline");
-    timelineEl.innerHTML = "";
-    content.timeline.forEach((t) => {
-      const div = document.createElement("div");
-      div.className = "item";
-      div.innerHTML = `<div class="dot"></div><div><b>${escapeHtml(t.title)}</b><span class="muted">${escapeHtml(t.text)}</span></div>`;
-      timelineEl.appendChild(div);
-    });
-
-    $("noteText").textContent = content.noteText;
-
-    // Date chip
-    const d = new Date();
-    $("today").textContent = d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
-
-    // Hearts
-    function spawnHeart(x, y){
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.textContent = Math.random() > 0.5 ? "💗" : "💖";
-      heart.style.left = (x ?? (Math.random() * window.innerWidth)) + "px";
-      heart.style.top  = (y ?? (window.innerHeight - 20)) + "px";
-      heart.style.fontSize = (16 + Math.random()*16) + "px";
-      document.body.appendChild(heart);
-      setTimeout(() => heart.remove(), 3900);
+  questions: [
+    {
+      id: 1,
+      question: "What's the longest duration of our call ?",
+      options: [
+        "Relationship cannot be counted by numbers, it is timeless",
+        "5 Hrs",
+        "5.30 Hrs",
+        "Ab itna dhyaan kon rakhta hai"
+      ]
+    },
+    {
+      id: 2,
+      question: "What time of the day do we usually talk the longest?",
+      options: [
+        "Morning 6am-10am",
+        "Noon 10 am-2 pm",
+        "Afternoon 2pm-5pm",
+        "Whenever i get free, I don't remember the time"
+      ]
+    },
+    {
+      id: 3,
+      question: "Which is the most spoken word to shikamaru",
+      options: [
+        "Ae Jana",
+        "Good Morning",
+        "Khauf",
+        "Shikamaru"
+      ]
+    },
+    {
+      id: 4,
+      question: "What’s the one thing we always do on calls?",
+      options: [
+        "Gossips",
+        "Serious discussions on life",
+        "drunk texts",
+        "Daily content in each other's life"
+      ]
+    },
+    {
+      id: 5,
+      question: "Who has been maximum time late on dates?",
+      options: [
+        "Neha",
+        "Kakashi",
+        "Leo's Sister",
+        "Doll"
+      ]
+    },
+    {
+      id: 6,
+      question: "When is the next meeting date",
+      options: [
+        "FT Right after this quizz",
+        "Whenever Neha wants to fly to blr",
+        "sometime in Feb if MCC is not an asshole",
+        "Whenever shikamaru hits a jackpot of leaves from the toxic manager"
+      ]
+    },
+    {
+      id: 7,
+      question: "Which activity Neha enjoys the most?",
+      options: [
+        "Talking to Shikamaru",
+        "Talking Leo for a walk",
+        "Hanging out with cousins",
+        "Reading Books",
+        "Sleeping"
+      ]
     }
-    $("btnHearts").addEventListener("click", () => {
-      for(let i=0;i<18;i++){
-        setTimeout(() => spawnHeart(), i*70);
-      }
-    });
-    document.addEventListener("click", (e) => {
-      // subtle hearts on clicks
-      if (e.target.tagName.toLowerCase() === "button") return;
-      if (Math.random() < 0.35) spawnHeart(e.clientX, e.clientY);
-    });
+  ]
+};
+/** ========================= */
 
-    // Dialogs
-    const note = $("note");
-    const question = $("question");
-    $("btnNote").addEventListener("click", () => note.showModal());
-    $("closeNote").addEventListener("click", () => note.close());
+const state = { screen: "start", index: 0, score: 0 };
 
-    $("btnQuestion").addEventListener("click", () => question.showModal());
-    $("closeQuestion").addEventListener("click", () => question.close());
+const $ = (id) => document.getElementById(id);
 
-    function celebrate(msg){
-      // quick confetti-ish via hearts
-      for(let i=0;i<45;i++){
-        setTimeout(() => spawnHeart(Math.random()*window.innerWidth, window.innerHeight - 10), i*35);
-      }
-      alert(msg);
+function setToday(){
+  const d = new Date();
+  $("today").textContent = d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
+}
+
+function spawnHeart(x, y){
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.textContent = Math.random() > 0.5 ? "💗" : "💖";
+  heart.style.left = (x ?? (Math.random() * window.innerWidth)) + "px";
+  heart.style.top  = (y ?? (window.innerHeight - 20)) + "px";
+  heart.style.fontSize = (16 + Math.random()*16) + "px";
+  document.body.appendChild(heart);
+  setTimeout(() => heart.remove(), 3900);
+}
+function heartBurst(n=18){
+  for(let i=0;i<n;i++){
+    setTimeout(() => spawnHeart(Math.random()*window.innerWidth, window.innerHeight - 10), i*35);
+  }
+}
+
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function render(){
+  const app = $("app");
+  app.innerHTML = "";
+  if(state.screen === "start") return renderStart(app);
+  if(state.screen === "quiz") return renderQuiz(app);
+  if(state.screen === "end") return renderEnd(app);
+}
+
+function renderStart(app){
+  const h = document.createElement("h1");
+  h.innerHTML = `Hi, <span style="color:var(--accent)">${escapeHtml(QUIZ.herName)}</span> 💞`;
+  app.appendChild(h);
+
+  const p = document.createElement("p");
+  p.className = "big";
+  p.textContent = "Pick any option — every answer is correct 😌💗";
+  app.appendChild(p);
+
+  const divider = document.createElement("div");
+  divider.className = "divider";
+  app.appendChild(divider);
+
+  const meta = document.createElement("div");
+  meta.className = "topbar";
+  meta.innerHTML = `
+    <div class="pill">Questions: ${QUIZ.questions.length}</div>
+    <div class="pill">Score: full points always</div>
+  `;
+  app.appendChild(meta);
+
+  const row = document.createElement("div");
+  row.className = "btnrow";
+
+  const startBtn = document.createElement("button");
+  startBtn.className = "primary";
+  startBtn.textContent = "Start Quiz ✨";
+  startBtn.onclick = () => {
+    state.screen = "quiz";
+    state.index = 0;
+    state.score = 0;
+    heartBurst(16);
+    render();
+  };
+
+  const heartsBtn = document.createElement("button");
+  heartsBtn.className = "secondary";
+  heartsBtn.textContent = "Tap for hearts 💗";
+  heartsBtn.onclick = () => heartBurst(22);
+
+  row.appendChild(startBtn);
+  row.appendChild(heartsBtn);
+  app.appendChild(row);
+}
+
+function renderQuiz(app){
+  const q = QUIZ.questions[state.index];
+
+  const top = document.createElement("div");
+  top.className = "topbar";
+  top.innerHTML = `
+    <div class="pill">Question ${state.index + 1} / ${QUIZ.questions.length}</div>
+    <div class="pill">Score: ${state.score}</div>
+  `;
+  app.appendChild(top);
+
+  const divider = document.createElement("div");
+  divider.className = "divider";
+  app.appendChild(divider);
+
+  const h = document.createElement("h1");
+  h.textContent = q.question;
+  app.appendChild(h);
+
+  const hint = document.createElement("p");
+  hint.className = "big";
+  hint.textContent = "Choose any option 😌";
+  app.appendChild(hint);
+
+  const opts = document.createElement("div");
+  opts.className = "btnrow";
+  q.options.forEach((label, idx) => {
+    const b = document.createElement("button");
+    b.className = "secondary";
+    b.textContent = label;
+    b.onclick = () => answer(idx);
+    opts.appendChild(b);
+  });
+  app.appendChild(opts);
+
+  const reaction = document.createElement("div");
+  reaction.className = "reaction";
+  reaction.id = "reaction";
+  app.appendChild(reaction);
+
+  const nav = document.createElement("div");
+  nav.className = "btnrow";
+
+  const backBtn = document.createElement("button");
+  backBtn.className = "ghost";
+  backBtn.textContent = "Back";
+  backBtn.disabled = state.index === 0;
+  backBtn.style.opacity = backBtn.disabled ? .5 : 1;
+  backBtn.onclick = () => {
+    if(state.index === 0) return;
+    state.index -= 1;
+    // remove points for going back (keep simple + consistent)
+    state.score = Math.max(0, state.score - QUIZ.pointsPerQuestion);
+    render();
+  };
+
+  nav.appendChild(backBtn);
+  app.appendChild(nav);
+}
+
+function answer(choiceIndex){
+  // Always add full points
+  state.score += QUIZ.pointsPerQuestion;
+
+  const reaction = $("reaction");
+  if(reaction) reaction.textContent = "Correct 😌💞";
+  spawnHeart();
+
+  state.index += 1;
+
+  setTimeout(() => {
+    if(state.index >= QUIZ.questions.length){
+      finish();
+    } else {
+      render();
     }
-    $("yesBtn").addEventListener("click", () => celebrate("YAY 💞 I love you!"));
-    $("alsoYesBtn").addEventListener("click", () => celebrate("Correct answer 😌💘"));
+  }, 600);
+}
 
-    function escapeHtml(s){
-      return String(s)
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
-  </script>
+function finish(){
+  heartBurst(40);
+  state.screen = "end";
+  render();
+}
+
+function renderEnd(app){
+  const h = document.createElement("h1");
+  h.textContent = "Result 💘";
+  app.appendChild(h);
+
+  const divider = document.createElement("div");
+  divider.className = "divider";
+  app.appendChild(divider);
+
+  const wrap = document.createElement("div");
+  wrap.className = "resultWrap";
+
+  const badge = document.createElement("div");
+  badge.className = "heartBadge";
+  badge.innerHTML = `
+    <div class="heartIcon">💖</div>
+    <div class="scoreText">${escapeHtml(QUIZ.finalScoreText)}</div>
+  `;
+
+  const msg = document.createElement("p");
+  msg.className = "big";
+  msg.style.color = "var(--text)";
+  msg.style.fontWeight = "800";
+  msg.textContent = QUIZ.finalLine;
+
+  const row = document.createElement("div");
+  row.className = "btnrow";
+
+  const replayBtn = document.createElement("button");
+  replayBtn.className = "primary";
+  replayBtn.textContent = "Play again 🔁";
+  replayBtn.onclick = () => {
+    state.screen = "start";
+    render();
+  };
+
+  const heartsBtn = document.createElement("button");
+  heartsBtn.className = "secondary";
+  heartsBtn.textContent = "More hearts 💗";
+  heartsBtn.onclick = () => heartBurst(26);
+
+  row.appendChild(replayBtn);
+  row.appendChild(heartsBtn);
+
+  wrap.appendChild(badge);
+  wrap.appendChild(msg);
+  wrap.appendChild(row);
+
+  app.appendChild(wrap);
+}
+
+// Init
+$("fromName").textContent = QUIZ.fromName;
+setToday();
+render();
+
+// subtle hearts on background taps
+document.addEventListener("click", (e) => {
+  if (e.target.tagName.toLowerCase() === "button") return;
+  if (Math.random() < 0.2) spawnHeart(e.clientX, e.clientY);
+});
+</script>
 </body>
 </html>
